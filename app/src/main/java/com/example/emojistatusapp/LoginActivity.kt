@@ -10,6 +10,8 @@ import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.google.android.gms.common.SignInButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var btnSignIn: SignInButton
@@ -52,6 +54,9 @@ class LoginActivity : AppCompatActivity() {
             Log.w(TAG, "Sign-in result: $response")
             // Successfully signed in
             val user = FirebaseAuth.getInstance().currentUser
+            val userID = user!!.uid
+            val userName = user.displayName
+            addUserMessage(userID, userName)
             updateUI(user)
             // ...
         } else {
@@ -62,6 +67,19 @@ class LoginActivity : AppCompatActivity() {
             // ...
         }
     }
+
+    private fun addUserMessage(id: String, name: String?) {
+        val defaultMessage = hashMapOf(
+            "displayName" to name,
+            "emojis" to "\uD83D\uDC3C"
+        )
+        val db = Firebase.firestore
+        db.collection("users").document(id)
+            .set(defaultMessage)
+            .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written")}
+            .addOnFailureListener { e -> Log.w(TAG, "Error adding document", e) }
+    }
+
 
     private fun updateUI(user: FirebaseUser?) {
         // Navigate to MainActivity

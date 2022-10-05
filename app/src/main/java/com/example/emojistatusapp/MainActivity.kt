@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.InputFilter
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -65,6 +66,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun showAlertDialog() {
         val editText = EditText(this)
+        val emojiFilter = EmojiFilter(this)
+        val lengthFilter = InputFilter.LengthFilter(9)
+        editText.filters = arrayOf(lengthFilter, emojiFilter)
+
         val dialog = AlertDialog.Builder(this)
             .setTitle("Update your emojis")
             .setView(editText)
